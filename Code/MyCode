@@ -1,0 +1,201 @@
+// App.js
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import styled from "styled-components";
+import Confetti from "react-confetti";
+
+// Styled-components for wave design
+const Wave = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(45deg, #ff7eb3, #ff758c, #ffa76c);
+  clip-path: polygon(0 75%, 100% 0, 100% 100%, 0% 100%);
+  z-index: -1;
+`;
+
+// Motion animations for smooth transitions
+const pageVariants = {
+  initial: { opacity: 0, x: "-100vw" },
+  in: { opacity: 1, x: 0 },
+  out: { opacity: 0, x: "100vw" },
+};
+
+const pageTransition = { duration: 0.7 };
+
+const App = () => {
+  const [step, setStep] = useState(1);
+  const [integrationSuccess, setIntegrationSuccess] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const nextStep = () => {
+    setStep((prev) => prev + 1);
+    toast.success("Step Completed!");
+  };
+
+  const handleIntegrationTest = () => {
+    const success = Math.random() > 0.5; // Simulate success/failure
+    setIntegrationSuccess(success);
+    setShowConfetti(success);
+    toast[success ? "success" : "error"](
+      success ? "Integration Successful!" : "Integration Failed"
+    );
+  };
+
+  return (
+    <div className="container text-center mt-5">
+      <ToastContainer />
+      <Wave />
+      {showConfetti && <Confetti />}
+      <motion.div
+        variants={pageVariants}
+        initial="initial"
+        animate="in"
+        exit="out"
+        transition={pageTransition}
+        className="p-5 bg-white shadow rounded"
+      >
+        <h1 className="text-primary mb-4">BeyondChats Setup</h1>
+
+        {/* Step 1: Registration */}
+        {step === 1 && (
+          <>
+            <h2>User Registration</h2>
+            <form className="mb-4">
+              <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Enter your name"
+              />
+              <input
+                type="email"
+                className="form-control mb-3"
+                placeholder="Enter your email"
+              />
+              <input
+                type="password"
+                className="form-control mb-3"
+                placeholder="Enter your password"
+              />
+              <button
+                className="btn btn-primary w-100"
+                onClick={(e) => {
+                  e.preventDefault();
+                  nextStep();
+                }}
+              >
+                Register
+              </button>
+            </form>
+          </>
+        )}
+
+        {/* Step 2: Setup Organisation */}
+        {step === 2 && (
+          <>
+            <h2>Setup Organisation</h2>
+            <form className="mb-4">
+              <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Company Name"
+              />
+              <input
+                type="url"
+                className="form-control mb-3"
+                placeholder="Company Website URL"
+              />
+              <textarea
+                className="form-control mb-3"
+                rows="3"
+                placeholder="Company Description"
+              ></textarea>
+              <button
+                className="btn btn-primary w-100"
+                onClick={(e) => {
+                  e.preventDefault();
+                  nextStep();
+                }}
+              >
+                Next
+              </button>
+            </form>
+          </>
+        )}
+
+        {/* Step 3: Chatbot Integration & Testing */}
+        {step === 3 && (
+          <>
+            <h2>Integrate & Test Your Chatbot</h2>
+
+            {/* Test Chatbot */}
+            <button
+              className="btn btn-warning w-100 mb-3"
+              onClick={() =>
+                toast.info(
+                  "Testing chatbot... A dummy chatbot is now visible on the bottom-right of your website."
+                )
+              }
+            >
+              Test Chatbot
+            </button>
+
+            {/* Integrate on Website */}
+            <button
+              className="btn btn-outline-primary w-100 mb-3"
+              onClick={() =>
+                toast.info(
+                  "Integration instructions sent! Paste the code in <head> of your website."
+                )
+              }
+            >
+              Integrate on Your Website
+            </button>
+
+            {/* Test Integration */}
+            <button
+              className="btn btn-success w-100"
+              onClick={handleIntegrationTest}
+            >
+              Test Integration
+            </button>
+
+            {/* Integration Results */}
+            {integrationSuccess !== null && (
+              <div className="mt-4">
+                {integrationSuccess ? (
+                  <>
+                    <div className="alert alert-success">
+                      Integration Successful! 🎉
+                    </div>
+                    <div className="d-flex flex-column align-items-center mt-3">
+                      <button className="btn btn-primary mb-2">
+                        Explore Admin Panel
+                      </button>
+                      <button className="btn btn-secondary mb-2">
+                        Start Talking to Your Chatbot
+                      </button>
+                      <div>
+                        <button className="btn btn-info mx-1">Share on Facebook</button>
+                        <button className="btn btn-info mx-1">Share on Twitter</button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="alert alert-danger">
+                    Integration Failed. Please try again.
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </motion.div>
+    </div>
+  );
+};
+
+export default App;
